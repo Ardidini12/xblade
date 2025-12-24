@@ -8,7 +8,7 @@ const AdminHomePage = () => {
 
             <div className="mt-8 gap-4 flex">
                 <Link href="/login">
-                    <Button variant="default">Login</Button>
+                    <Button variant="default">Sign In</Button>
                 </Link>
             </div>
         </main>

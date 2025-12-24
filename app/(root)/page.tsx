@@ -8,8 +8,8 @@ const HomePage = () => {
             <p className="mt-4 text-slate-400">The Ultimate Pro Clubs Platform</p>
 
             <div className="mt-8 gap-4 flex">
-                <Link href="/login">
-                    <Button variant="default">Login</Button>
+                <Link href="/sign-in">
+                    <Button variant="default">Sign In</Button>
                 </Link>
                 <Link href="/leagues/view">
                     <Button variant="outline">View Leagues</Button>
@@ -17,7 +17,7 @@ const HomePage = () => {
             </div>
             <div className="mt-8 gap-4 flex">
                 <p className="mt-4 text-slate-400"> Don't have an account with us?
-                    <Link href="/signup"> Sign Up</Link>
+                    <Link href="/sign-up"> Sign Up</Link>
                 </p>
             </div>
         </main>
