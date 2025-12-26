@@ -8,9 +8,8 @@ import { useRouter } from "next/navigation";
 import { signInWithEmail } from '@/lib/actions/auth.actions';
 
 
-
 const SignIn = () => {
-   const router = useRouter();
+    const router = useRouter()
     const {
         register,
         handleSubmit,
@@ -23,6 +22,7 @@ const SignIn = () => {
         mode: 'onBlur',
     });
 
+  
     const onSubmit = async (data: SignInFormData) => {
         try {
             const result = await signInWithEmail(data);
