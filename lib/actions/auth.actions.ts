@@ -2,19 +2,33 @@
 
 import {auth} from "@/lib/better-auth/auth";
 import {headers} from "next/headers";
+import {connectToDatabase} from "@/database/mongoose";
 
 
 
 export const signUpWithEmail = async ({ email, password, fullName, gamertag }: SignUpFormData) => {
     try {
-        const response = await auth.api.signUpEmail({ body: { email, password, name: fullName } })
+        const response = await auth.api.signUpEmail({ body: { email, password, name: fullName } });
 
-        return { success: true, data: response }
+        
+        if (response?.user?.email) {
+            const mongoose = await connectToDatabase();
+            const db = mongoose.connection.db;
+            if (db) {
+            
+                await db.collection('user').updateOne(
+                    { email: response.user.email }, 
+                    { $set: { gamertag } }
+                );
+            }
+        }
+
+        return { success: true, data: response };
     } catch (e) {
-        console.log('Sign up failed', e)
-        return { success: false, error: 'Sign up failed' }
+        console.log('Sign up or profile update failed', e);
+        return { success: false, error: 'Sign up process failed' };
     }
-}
+};
 
 export const signInWithEmail = async ({ email, password }: SignInFormData) => {
     try {
