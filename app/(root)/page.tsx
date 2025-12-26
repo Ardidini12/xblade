@@ -12,7 +12,7 @@ const HomePage = () => {
                     <Button variant="default">Sign In</Button>
                 </Link>
                 <Link href="/leagues/view">
-                    <Button variant="outline">View Leagues</Button>
+                    <Button variant="default">View Leagues</Button>
                 </Link>
             </div>
             <div className="mt-8 gap-4 flex">
