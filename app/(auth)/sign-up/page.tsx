@@ -4,8 +4,12 @@ import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import FooterLink from "@/components/forms/FooterLink";
+import { useRouter } from "next/navigation";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
+
 
 const SignUp = () => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -23,13 +27,11 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
-
+      const result = await signUpWithEmail(data);
+      if (result.success) router.push('/');
     } catch (e) {
       console.error(e);
-
     }
-
   }
   return (
     <>

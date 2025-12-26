@@ -28,7 +28,7 @@ declare global {
         linkText: string;
         href: string;
     }
-        ;
+        
 }
 
 export { };
