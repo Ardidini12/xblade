@@ -4,10 +4,13 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import InputField from '@/components/forms/InputField';
 import FooterLink from '@/components/forms/FooterLink';
+import { useRouter } from "next/navigation";
+import { signInWithEmail } from '@/lib/actions/auth.actions';
+
 
 
 const SignIn = () => {
-   
+   const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -22,7 +25,8 @@ const SignIn = () => {
 
     const onSubmit = async (data: SignInFormData) => {
         try {
-            console.log(data);
+            const result = await signInWithEmail(data);
+            if(result.success) router.push('/');
         } catch (e) {
             console.error(e);
         }
@@ -61,6 +65,7 @@ const SignIn = () => {
                 </Button>
 
                 <FooterLink text="Don't have an account?" linkText=" Create an account" href="/sign-up" />
+                <FooterLink text="" linkText="Return to HomePage" href="/" />
             </form>
 
         </>

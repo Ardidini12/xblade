@@ -80,6 +80,7 @@ const SignUp = () => {
         </Button>
 
         <FooterLink text="Already have an account?" linkText=" Sign in" href="/sign-in" />
+        <FooterLink text="" linkText="Return to HomePage" href="/" />
 
       </form>
     </>
