@@ -29,12 +29,10 @@ declare global {
         href: string;
     }
 
-    interface User {
-        user: {
+    type User = {
           name?: string | null
           email?: string | null
           image?: string | null
-        }
       }
         
 }
