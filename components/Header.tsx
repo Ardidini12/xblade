@@ -1,6 +1,6 @@
 import NavItems from "@/components/NavItems"
 
-const Header = ({ user }: User) => {
+const Header = async ({ user }: { user: User }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-950">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
