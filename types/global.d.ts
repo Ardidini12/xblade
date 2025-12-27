@@ -28,6 +28,14 @@ declare global {
         linkText: string;
         href: string;
     }
+
+    interface User {
+        user: {
+          name?: string | null
+          email?: string | null
+          image?: string | null
+        }
+      }
         
 }
 
