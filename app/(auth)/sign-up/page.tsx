@@ -28,7 +28,7 @@ const SignUp = () => {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       const result = await signUpWithEmail(data);
-      if (result.success) router.push('/');
+      if (result.success) router.push('/welcome-user');
     } catch (e) {
       console.error(e);
     }
