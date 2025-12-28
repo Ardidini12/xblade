@@ -7,7 +7,7 @@ const AdminHomePage = () => {
             <h1 className="text-6xl font-extrabold tracking-widest">XBLADE</h1>
 
             <div className="mt-8 gap-4 flex">
-                <Link href="/login">
+                <Link href="/sign-in">
                     <Button variant="default">Sign In</Button>
                 </Link>
             </div>

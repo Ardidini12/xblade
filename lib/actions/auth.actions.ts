@@ -51,3 +51,15 @@ export const signOut = async () => {
         return { success: false, error: 'Sign out failed' }
     }
 }
+
+export const getSession = async (customHeaders?: Headers) => {
+    try {
+        // Use custom headers if provided (for middleware), otherwise use Next.js headers()
+        const headersToUse = customHeaders || await headers();
+        const session = await auth.api.getSession({ headers: headersToUse });
+        return { success: true, session };
+    } catch (e) {
+        console.log('Get session failed', e);
+        return { success: false, error: 'Get session failed' };
+    }
+}

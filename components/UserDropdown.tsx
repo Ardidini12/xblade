@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/actions/auth.actions"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { LogOut } from "lucide-react"
 import { useState } from "react"
 
@@ -18,6 +18,7 @@ interface UserDropdownProps {
 
 const UserDropdown = ({ children }: UserDropdownProps) => {
   const router = useRouter()
+  const pathname = usePathname()
   const [isSigningOut, setIsSigningOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,8 +34,13 @@ const UserDropdown = ({ children }: UserDropdownProps) => {
         return
       }
       
-      // Success - redirect to home
-      router.push("/")
+      // Success - redirect based on current route
+      // If on admin route, redirect to /admin landing page, otherwise redirect to home
+      if (pathname?.startsWith("/admin") || pathname === "/welcome-admin") {
+        router.push("/admin")
+      } else {
+        router.push("/")
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred"
       setError(errorMessage)

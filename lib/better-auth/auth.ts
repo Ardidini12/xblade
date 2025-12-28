@@ -26,6 +26,13 @@ export const getAuth = async () => {
             maxPasswordLength: 128,
             autoSignIn: true,
         },
+        session: {
+            expiresIn: 60 * 60 * 24 * 7, // 7 days
+            cookieCache: {
+              enabled: true,
+              maxAge: 5 * 60, // 5 minutes
+            },
+          },
         plugins: [nextCookies()],
         user: {
             additionalFields: {
@@ -39,7 +46,6 @@ export const getAuth = async () => {
                     type: "string",
                     input: true, // Allow user input during sign-up
                     required: true,
-                    unique: true,
                 },
             },
         },
