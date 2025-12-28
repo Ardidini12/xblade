@@ -27,6 +27,22 @@ export const getAuth = async () => {
             autoSignIn: true,
         },
         plugins: [nextCookies()],
+        user: {
+            additionalFields: {
+                role: {
+                    type: "string",
+                    input: false, // Prevent user input during sign-up
+                    required: false,
+                    defaultValue: "user", // Default role for new users
+                },
+                gamertag: {
+                    type: "string",
+                    input: true, // Allow user input during sign-up
+                    required: true,
+                    unique: true,
+                },
+            },
+        },
     });
 
     return authInstance;

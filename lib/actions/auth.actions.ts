@@ -2,47 +2,33 @@
 
 import {auth} from "@/lib/better-auth/auth";
 import {headers} from "next/headers";
-import {connectToDatabase} from "@/database/mongoose";
-import User from "@/lib/models/user.model";
 
 
+// Extract the body type from the signUpEmail function parameters
+type SignUpInput = NonNullable<Parameters<typeof auth.api.signUpEmail>[0]>;
+type BaseSignUpBody = SignUpInput["body"];
+// Extend the base type to include gamertag (which is configured in the schema)
+type SignUpBody = BaseSignUpBody & { gamertag: string };
 
 export const signUpWithEmail = async ({ email, password, fullName, gamertag }: SignUpFormData) => {
-    let response;
-
     try {
-        // Better-auth sign-up (without gamertag, which is not supported on the request body)
-        response = await auth.api.signUpEmail({ body: { email, password, name: fullName } });
+        // Better-auth sign-up with gamertag included directly
+        // The gamertag field is configured in the Better Auth schema with input: true
+        const body: SignUpBody = { 
+            email, 
+            password, 
+            name: fullName,
+            gamertag 
+        };
+        
+        const response = await auth.api.signUpEmail({ body } as SignUpInput);
+
+        return { success: true, data: response };
     } catch (e) {
         console.log("Sign up failed", e);
         const message = e instanceof Error ? e.message : "Unknown error";
         return { success: false, error: `Sign up failed: ${message}` };
     }
-
-    if (!response?.user?.email) {
-        console.log("Sign up succeeded but response missing user email");
-        return { success: true, accountCreated: true, error: "Gamertag update failed: user email missing" };
-    }
-
-    try {
-        await connectToDatabase();
-        const updatedUser = await User.findOneAndUpdate(
-            { email: response.user.email },
-            { gamertag },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            console.log("Gamertag update failed: user not found", { email: response.user.email });
-            return { success: true, accountCreated: true, error: "Gamertag update failed: user not found" };
-        }
-    } catch (e) {
-        console.log("Gamertag update failed", e);
-        const message = e instanceof Error ? e.message : "Unknown error";
-        return { success: true, accountCreated: true, error: `Gamertag update failed: ${message}` };
-    }
-
-    return { success: true, data: response };
 };
 
 export const signInWithEmail = async ({ email, password }: SignInFormData) => {
