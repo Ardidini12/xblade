@@ -1,14 +1,15 @@
-import {auth} from "@/lib/better-auth/auth";
-import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 import Header from "@/components/Header";
+import {getSession} from "@/lib/actions/auth.actions";
 
 const WelcomeUser = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const result = await getSession();
   
-  if(!session?.user) {
+  if(!result.success || !result.session?.user) {
     redirect('/sign-in');
   }
+  
+  const session = result.session;
 
   const firstName = session?.user?.name?.split(' ')[0] || null;
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "./lib/better-auth/auth";
+import { getSession } from "./lib/actions/auth.actions";
 
 export const runtime = "nodejs";
 
@@ -16,11 +16,10 @@ export async function middleware(request: NextRequest) {
   // Protect all /admin/* sub-routes (except /admin itself)
   // Also protect /welcome-admin route
   if ((pathname.startsWith("/admin") && pathname !== "/admin") || pathname === "/welcome-admin") {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    const result = await getSession(request.headers);
 
     // If no session or user is not admin, redirect to sign-in
+    const session = result.success ? result.session : null;
     const userRole = (session?.user as { role?: string })?.role;
     if (!session || userRole !== "admin") {
       const signInUrl = new URL("/sign-in", request.url);

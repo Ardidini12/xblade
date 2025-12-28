@@ -13,7 +13,7 @@ const SignIn = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isRedirecting, setIsRedirecting] = useState(false);
-    
+
     const {
         register,
         handleSubmit,
@@ -33,13 +33,14 @@ const SignIn = () => {
             if (result.success && result.session) {
                 const userRole = (result.session.user as { role?: string })?.role;
                 const redirectParam = searchParams.get('redirect');
-                
+
                 // If there's a redirect parameter, use it (for protected routes)
-                if (redirectParam) {
+                // Only allow relative paths to prevent open redirect attacks
+                if (redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')) {
                     router.push(redirectParam);
                     return;
                 }
-                
+
                 // Otherwise, redirect based on role
                 if (userRole === 'admin') {
                     router.push('/welcome-admin');
@@ -56,19 +57,21 @@ const SignIn = () => {
             router.push('/welcome-user');
         }
     };
-  
+
     const onSubmit = async (data: SignInFormData) => {
         try {
             const result = await signInWithEmail(data);
-            if(result.success) {
+            if (result.success) {
                 setIsRedirecting(true);
-                // Small delay to ensure session is set
-                setTimeout(() => {
-                    redirectAfterLogin();
-                }, 100);
+                try {
+                    await redirectAfterLogin();
+                } catch {
+                    setIsRedirecting(false);
+                }
             }
         } catch (e) {
             console.error(e);
+            setIsRedirecting(false);
         }
     }
     return (
@@ -81,12 +84,12 @@ const SignIn = () => {
                     placeholder="your@email.com"
                     register={register}
                     error={errors.email}
-                    validation={{ 
-                        required: 'Email is required', 
-                        pattern: { 
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-                            message: 'Please enter a valid email address' 
-                        } 
+                    validation={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: 'Please enter a valid email address'
+                        }
                     }}
                 />
                 <InputField
