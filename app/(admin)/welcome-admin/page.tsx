@@ -1,0 +1,33 @@
+import {auth} from "@/lib/better-auth/auth";
+import {headers} from "next/headers";
+import {redirect} from "next/navigation";
+import Header from "@/components/Header";
+
+const WelcomeAdmin = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  
+  if(!session?.user) {
+    redirect('/sign-in');
+  }
+
+  const firstName = session?.user?.name?.split(' ')[0] || null;
+
+  const user = {
+    name: session?.user?.name,
+    email: session?.user?.email,
+    image: session?.user?.image,
+  };
+
+  return (
+    <>
+      <Header user={user} />
+      <main className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-white">
+        <h1 className="text-6xl font-extrabold tracking-widest">
+          WELCOME {firstName ? firstName.toUpperCase() : 'ADMIN'}
+        </h1>
+      </main>
+    </>
+  )
+}
+
+export default WelcomeAdmin

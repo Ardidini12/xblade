@@ -51,3 +51,13 @@ export const signOut = async () => {
         return { success: false, error: 'Sign out failed' }
     }
 }
+
+export const getSession = async () => {
+    try {
+        const session = await auth.api.getSession({ headers: await headers() });
+        return { success: true, session };
+    } catch (e) {
+        console.log('Get session failed', e);
+        return { success: false, error: 'Get session failed' };
+    }
+}
