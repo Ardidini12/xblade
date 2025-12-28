@@ -10,6 +10,7 @@ export interface UserDocument extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   gamertag?: string;
+  role?: "admin" | "user";
 }
 
 const UserSchema = new Schema<UserDocument>(
@@ -23,6 +24,7 @@ const UserSchema = new Schema<UserDocument>(
     createdAt: { type: Date },
     updatedAt: { type: Date },
     gamertag: { type: String, unique: true, sparse: true },
+    role: { type: String, enum: ["admin", "user"], default: "user" },
   },
   {
     collection: "user",

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "tailwind-scrollbar-hide";
 
 
 @custom-variant dark (&:is(.dark *));
@@ -120,15 +121,13 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply scrollbar-hide;
+  }
   body {
     @apply bg-background text-foreground;
   
   }
 
-}
-
-/*removes scrollbar */
-::-webkit-scrollbar {
-  display: none;
 }
 
