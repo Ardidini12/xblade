@@ -34,31 +34,31 @@ export const signUpWithEmail = async ({ email, password, fullName, gamertag }: S
 };
 
 export const signInWithEmail = async ({ email, password }: SignInFormData) => {
-    // First, check if the email exists in the database
-    let userExists = false;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Optional: internal existence check for logging / monitoring only.
+    // Never surface DB-specific results to the client to avoid user enumeration.
+    
     try {
         await connectToDatabase();
-        const user = await User.findOne({ email: email.toLowerCase().trim() });
-        userExists = !!user;
+        const user = await User.findOne({ email: normalizedEmail });
+        if (!user) {
+            console.log("Sign in attempt with non-existent email:", normalizedEmail);
+        }
     } catch (dbError) {
-        console.log('Error checking user existence:', dbError);
-        // If we can't check the database, we'll fall back to generic error
-    }
-    
-    // If email doesn't exist, return specific error immediately
-    if (!userExists) {
-        return { success: false, error: 'No account found with this email address' };
-    }
-    
-    // Email exists, attempt sign-in
-    try {
-        const response = await auth.api.signInEmail({ body: { email, password } })
-        return { success: true, data: response }
-    } catch (e) {
-        console.log('Sign in failed', e)
+        console.log("Error checking user existence during sign-in:", dbError);
         
-        // Email exists, so if sign-in fails, password must be incorrect
-        return { success: false, error: 'Incorrect password' }
+    }
+
+    try {
+        const response = await auth.api.signInEmail({
+            body: { email: normalizedEmail, password },
+        });
+        return { success: true, data: response };
+    } catch (e) {
+        console.log("Sign in failed", e);
+        // Do not reveal whether the email exists or the password was wrong
+        return { success: false, error: "Invalid email or password" };
     }
 }
 

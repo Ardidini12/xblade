@@ -65,20 +65,20 @@ const UserDropdown = ({ children }: UserDropdownProps) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
-        <Link href="/welcome-user">
-          <DropdownMenuItem className="cursor-pointer">
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/welcome-user">
             <Home className="mr-2 h-4 w-4" />
             <span>Home</span>
-          </DropdownMenuItem>
-        </Link>
-        
-        <Link href="/profile">
-          <DropdownMenuItem className="cursor-pointer">
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/profile">
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
-          </DropdownMenuItem>
-        </Link>
+          </Link>
+        </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         

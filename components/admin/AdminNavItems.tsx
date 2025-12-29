@@ -3,6 +3,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import AdminDropdown from "@/components/admin/AdminDropdown"
 
+interface User {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}
+
 interface AdminNavItemsProps {
   user: User
 }
