@@ -130,7 +130,7 @@ export default function UserTable({
             <tbody>
               {users.map((user) => (
                 <tr
-                  key={user.id}
+                  key={user.id ?? user.email}
                   className="border-b transition-colors hover:bg-muted/50"
                 >
                   <td className="p-4 align-middle">
