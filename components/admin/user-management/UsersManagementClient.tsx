@@ -1,7 +1,8 @@
 "use client"
 
+
 import { useEffect, useState, useRef } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -66,7 +67,7 @@ export default function UsersManagementClient({
   const router = useRouter()
   const searchParams = useSearchParams()
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
+  const pathname = usePathname()
   const [users, setUsers] = useState(initialUsers)
   const [total, setTotal] = useState(initialTotal)
   const [page, setPage] = useState(initialPage)
@@ -128,7 +129,7 @@ export default function UsersManagementClient({
       params.set("sortOrder", updates.sortOrder)
     }
 
-    router.push(`/admin/users?${params.toString()}`)
+    router.push(`${pathname}?${params.toString()}`)
   }
 
   const refreshUsers = async () => {
@@ -249,8 +250,16 @@ export default function UsersManagementClient({
     try {
       let result
       if (selectedUser) {
+        // Ensure the selected user has a valid id before attempting update
+        if (!selectedUser.id) {
+          setIsFormLoading(false)
+          return {
+            success: false,
+            error: "Cannot update user: missing user ID",
+          }
+        }
         // Update existing user (no password changes allowed)
-        result = await updateUser(selectedUser.id!, {
+        result = await updateUser(selectedUser.id, {
           name: data.name,
           email: data.email,
           role: data.role,
@@ -292,11 +301,14 @@ export default function UsersManagementClient({
   }
 
   const handleConfirmDelete = async () => {
-    if (!selectedUser) return
+    if (!selectedUser || !selectedUser.id) {
+      showToast("Cannot delete user: missing user information or ID", "error")
+      return
+    }
 
     setIsFormLoading(true)
     try {
-      const result = await deleteUser(selectedUser.id!)
+      const result = await deleteUser(selectedUser.id)
 
       if (result.success) {
         showToast("User deleted successfully", "success")
@@ -318,7 +330,11 @@ export default function UsersManagementClient({
     newRole: "admin" | "user"
   ) => {
     try {
-      const result = await updateUsersRole([user.id!], newRole)
+      if (!user || !user.id) {
+        showToast("Cannot update role: missing user information or ID", "error")
+        return
+      }
+      const result = await updateUsersRole([user.id], newRole)
 
       if (result.success) {
         showToast(

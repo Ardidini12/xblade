@@ -67,27 +67,27 @@ const AdminDropdown = ({ children }: AdminDropdownProps) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
-        <Link href="/welcome-admin">
-          <DropdownMenuItem className="cursor-pointer">
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/welcome-admin">
             <Shield className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
-          </DropdownMenuItem>
-        </Link>
-        
-        <Link href="/admin/users">
-          <DropdownMenuItem className="cursor-pointer">
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/admin/users">
             <Users className="mr-2 h-4 w-4" />
             <span>User Management</span>
-          </DropdownMenuItem>
-        </Link>
-        
-        <Link href="/admin/settings">
-          <DropdownMenuItem className="cursor-pointer">
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/admin/settings">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
-          </DropdownMenuItem>
-        </Link>
+          </Link>
+        </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         
