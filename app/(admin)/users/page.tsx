@@ -34,7 +34,12 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
     image: session.user.image,
   }
 
-  const currentUserId = (session.user as { id?: string })?.id
+  // Get current user ID from database
+  const { connectToDatabase } = await import("@/database/mongoose")
+  const User = (await import("@/lib/models/user.model")).default
+  await connectToDatabase()
+  const dbUser = await User.findOne({ email: session.user.email?.toLowerCase().trim() })
+  const currentUserId = dbUser?._id?.toString()
 
   // Parse search params
   const page = parseInt(searchParams.page || "1", 10)
