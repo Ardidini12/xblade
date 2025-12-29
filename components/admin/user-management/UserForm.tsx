@@ -235,12 +235,12 @@ export default function UserForm({
         const lowerError = errorMessage.toLowerCase()
         // Check if it's an email-related error
         if (lowerError.includes('email') || lowerError.includes('already in use')) {
-          setErrors({ ...errors, email: errorMessage })
+          setErrors((prev) => ({ ...prev, email: errorMessage }))
         } else if (lowerError.includes('gamertag')) {
-          setErrors({ ...errors, gamertag: errorMessage })
+          setErrors((prev) => ({ ...prev, gamertag: errorMessage }))
         } else {
           // Generic error - show as email error for now
-          setErrors({ ...errors, email: errorMessage })
+          setErrors((prev) => ({ ...prev, email: errorMessage }))
         }
         return
       }
