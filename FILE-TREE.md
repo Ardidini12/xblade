@@ -4,7 +4,12 @@
 xblade/
 ├── app/
 │   ├── (admin)/
-│   │   └── admin/
+│   │   ├── admin/
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── users/
+│   │   │       └── page.tsx
+│   │   └── welcome-admin/
 │   │       └── page.tsx
 │   ├── (auth)/
 │   │   ├── sign-in/
@@ -20,13 +25,27 @@ xblade/
 │   ├── globals.css
 │   └── layout.tsx
 ├── components/
+│   ├── admin/
+│   │   ├── AdminHeader.tsx
+│   │   ├── AdminNavItems.tsx
+│   │   ├── AdminDropdown.tsx
+│   │   └── user-management/
+│   │       ├── UserActions.tsx
+│   │       ├── UserForm.tsx
+│   │       ├── UserSearch.tsx
+│   │       ├── UserTable.tsx
+│   │       └── UsersManagementClient.tsx
+│   ├── shared/
+│   │   └── BaseHeader.tsx
 │   ├── forms/
 │   │   ├── FooterLink.tsx
 │   │   └── InputField.tsx
 │   ├── ui/
 │   │   ├── avatar.tsx
+│   │   ├── badge.tsx
 │   │   ├── button.tsx
 │   │   ├── card.tsx
+│   │   ├── dialog.tsx
 │   │   ├── dropdown-menu.tsx
 │   │   ├── input.tsx
 │   │   ├── label.tsx
@@ -38,7 +57,8 @@ xblade/
 │   └── mongoose.ts
 ├── lib/
 │   ├── actions/
-│   │   └── auth.actions.ts
+│   │   ├── auth.actions.ts
+│   │   └── user.actions.ts
 │   ├── better-auth/
 │   │   └── auth.ts
 │   ├── models/
@@ -59,9 +79,11 @@ xblade/
 ├── package.json
 ├── package-lock.json
 ├── postcss.config.mjs
+├── proxy.ts
 ├── README.md
 ├── tsconfig.json
-└── FILE-TREE.md
+├── FILE-TREE.md
+└── USER_MANAGEMENT_README.md
 ```
 
 ## Directory Structure
@@ -69,13 +91,27 @@ xblade/
 ### `/app`
 Next.js App Router directory containing route groups and pages:
 - `(admin)/` - Admin route group
+  - `admin/` - Admin dashboard page with layout
+    - `users/` - User management page
+  - `welcome-admin/` - Admin welcome page
 - `(auth)/` - Authentication route group (sign-in, sign-up)
 - `(root)/` - Root route group (homepage, welcome-user)
 
 ### `/components`
 React components organized by category:
+- `admin/` - Admin-specific components
+  - `AdminHeader.tsx`, `AdminNavItems.tsx`, `AdminDropdown.tsx`
+  - `user-management/` - User management interface components
+    - `UserActions.tsx` - Action dropdown for each user
+    - `UserForm.tsx` - Create/edit user form modal
+    - `UserSearch.tsx` - Search and filter controls
+    - `UserTable.tsx` - User table with pagination and sorting
+    - `UsersManagementClient.tsx` - Main client orchestrator
+- `shared/` - Shared base components used by both user and admin components
 - `forms/` - Form-related components
 - `ui/` - Reusable UI components (shadcn/ui)
+  - `avatar.tsx`, `badge.tsx`, `button.tsx`, `card.tsx`, `dialog.tsx`, `dropdown-menu.tsx`, `input.tsx`, `label.tsx`, `select.tsx`
+- Root level: User-specific components (Header, NavItems, UserDropdown)
 
 ### `/database`
 Database configuration and connection files
@@ -83,6 +119,8 @@ Database configuration and connection files
 ### `/lib`
 Utility libraries and business logic:
 - `actions/` - Server actions
+  - `auth.actions.ts` - Authentication server actions
+  - `user.actions.ts` - User management operations (CRUD, search, sort, filters, availability checks)
 - `better-auth/` - Authentication configuration
 - `models/` - Data models
 
@@ -98,6 +136,13 @@ TypeScript type definitions
 - `eslint.config.mjs` - ESLint configuration
 - `next.config.ts` - Next.js configuration
 - `postcss.config.mjs` - PostCSS configuration
+- `proxy.ts` - Proxy server configuration
 - `tsconfig.json` - TypeScript configuration
 - `package.json` - Node.js dependencies and scripts
+
+## Documentation Files
+
+- `README.md` - Main project documentation
+- `FILE-TREE.md` - Project file structure (this file)
+- `USER_MANAGEMENT_README.md` - User management interface documentation
 

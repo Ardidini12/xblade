@@ -1,5 +1,5 @@
 import {redirect} from "next/navigation";
-import Header from "@/components/Header";
+import AdminHeader from "@/components/admin/AdminHeader";
 import {getSession} from "@/lib/actions/auth.actions";
 
 const WelcomeAdmin = async () => {
@@ -21,7 +21,7 @@ const WelcomeAdmin = async () => {
 
   return (
     <>
-      <Header user={user} />
+      <AdminHeader user={user} />
       <main className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-white">
         <h1 className="text-6xl font-extrabold tracking-widest">
           WELCOME {firstName ? firstName.toUpperCase() : 'ADMIN'}
