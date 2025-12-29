@@ -1,5 +1,9 @@
 import NavItems from "@/components/NavItems"
 
+/**
+ * User-specific header component
+ * Used exclusively in /app/(root)/ routes
+ */
 const Header = ({ user }: { user: User }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-950">

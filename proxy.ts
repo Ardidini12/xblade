@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getSession } from "./lib/actions/auth.actions";
 
-export const runtime = "nodejs";
-
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // Allow /admin (exact path) to be public - it's the landing page

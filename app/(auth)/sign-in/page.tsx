@@ -13,6 +13,7 @@ const SignIn = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isRedirecting, setIsRedirecting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const {
         register,
@@ -59,6 +60,7 @@ const SignIn = () => {
     };
 
     const onSubmit = async (data: SignInFormData) => {
+        setError(null); // Clear previous errors
         try {
             const result = await signInWithEmail(data);
             if (result.success) {
@@ -68,10 +70,15 @@ const SignIn = () => {
                 } catch {
                     setIsRedirecting(false);
                 }
+            } else {
+                // Display error message to user
+                setError(result.error || 'Sign in failed. Please try again.');
             }
         } catch (e) {
             console.error(e);
             setIsRedirecting(false);
+            const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred';
+            setError(errorMessage);
         }
     }
     return (
@@ -101,6 +108,12 @@ const SignIn = () => {
                     error={errors.password}
                     validation={{ required: 'Password is required', minLength: { value: 8, message: 'Password must be at least 8 characters' } }}
                 />
+
+                {error && (
+                    <div className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-md p-3">
+                        {error}
+                    </div>
+                )}
 
                 <Button type="submit" disabled={isSubmitting || isRedirecting} className="yellow-btn w-full mt-5">
                     {isSubmitting || isRedirecting ? 'Signing In...' : 'Sign In'}

@@ -9,22 +9,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/actions/auth.actions"
-import { useRouter } from "next/navigation"
-import { LogOut, User, Home } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
+import { LogOut, Users, Settings, Shield } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
 
-interface UserDropdownProps {
+interface AdminDropdownProps {
   children: React.ReactNode
 }
 
 /**
- * User-specific dropdown menu component
- * Includes user-specific options like Profile and Home
- * Used exclusively in user routes
+ * Admin-specific dropdown menu component
+ * Includes admin-specific options like User Management and Settings
+ * Used exclusively in admin routes
  */
-const UserDropdown = ({ children }: UserDropdownProps) => {
+const AdminDropdown = ({ children }: AdminDropdownProps) => {
   const router = useRouter()
+  const pathname = usePathname()
   const [isSigningOut, setIsSigningOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,8 +41,8 @@ const UserDropdown = ({ children }: UserDropdownProps) => {
         return
       }
       
-      // Redirect to home page after sign out
-      router.push("/")
+      // Redirect to admin sign-in page after sign out
+      router.push("/admin")
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred"
       setError(errorMessage)
@@ -58,25 +59,33 @@ const UserDropdown = ({ children }: UserDropdownProps) => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">My Account</p>
+            <p className="text-sm font-medium leading-none">Admin Panel</p>
             <p className="text-xs leading-none text-muted-foreground">
-              User
+              <Shield className="inline h-3 w-3 mr-1" />
+              Administrator
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
-        <Link href="/welcome-user">
+        <Link href="/welcome-admin">
           <DropdownMenuItem className="cursor-pointer">
-            <Home className="mr-2 h-4 w-4" />
-            <span>Home</span>
+            <Shield className="mr-2 h-4 w-4" />
+            <span>Dashboard</span>
           </DropdownMenuItem>
         </Link>
         
-        <Link href="/profile">
+        <Link href="/admin/users">
           <DropdownMenuItem className="cursor-pointer">
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <Users className="mr-2 h-4 w-4" />
+            <span>User Management</span>
+          </DropdownMenuItem>
+        </Link>
+        
+        <Link href="/admin/settings">
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
           </DropdownMenuItem>
         </Link>
         
@@ -102,5 +111,5 @@ const UserDropdown = ({ children }: UserDropdownProps) => {
   )
 }
 
-export default UserDropdown
+export default AdminDropdown
 

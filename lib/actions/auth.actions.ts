@@ -2,6 +2,8 @@
 
 import {auth} from "@/lib/better-auth/auth";
 import {headers} from "next/headers";
+import {connectToDatabase} from "@/database/mongoose";
+import User from "@/lib/models/user.model";
 
 
 // Extract the body type from the signUpEmail function parameters
@@ -32,13 +34,31 @@ export const signUpWithEmail = async ({ email, password, fullName, gamertag }: S
 };
 
 export const signInWithEmail = async ({ email, password }: SignInFormData) => {
+    // First, check if the email exists in the database
+    let userExists = false;
+    try {
+        await connectToDatabase();
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
+        userExists = !!user;
+    } catch (dbError) {
+        console.log('Error checking user existence:', dbError);
+        // If we can't check the database, we'll fall back to generic error
+    }
+    
+    // If email doesn't exist, return specific error immediately
+    if (!userExists) {
+        return { success: false, error: 'No account found with this email address' };
+    }
+    
+    // Email exists, attempt sign-in
     try {
         const response = await auth.api.signInEmail({ body: { email, password } })
-
         return { success: true, data: response }
     } catch (e) {
         console.log('Sign in failed', e)
-        return { success: false, error: 'Sign in failed' }
+        
+        // Email exists, so if sign-in fails, password must be incorrect
+        return { success: false, error: 'Incorrect password' }
     }
 }
 
