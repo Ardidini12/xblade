@@ -335,7 +335,7 @@ export default function UserForm({
 
             <div className="grid gap-2">
               <Label htmlFor="gamertag">
-                Gamertag {!isEditMode && <span className="text-destructive">*</span>}
+                Gamertag <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="gamertag"
