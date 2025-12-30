@@ -225,7 +225,7 @@ MatchSchema.index({ matchId: 1 }, { unique: true });
 // Create index for timestamp to support time-based queries
 MatchSchema.index({ timestamp: -1 });
 
-// Create a text index on matchId for faster searches
-MatchSchema.index({ matchId: "text" });
+// Create a sparse wildcard index on clubs to support dynamic club-existence queries
+MatchSchema.index({ "clubs.$**": 1 }, { sparse: true });
 
 export default mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema);
