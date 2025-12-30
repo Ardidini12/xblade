@@ -259,15 +259,51 @@ export async function getRecentMatchesForClub(clubId: string) {
  * @returns Object with match statistics
  */
 export async function getClubMatchStats(clubId: string) {
-  try {
-    await connectToDatabase();
-    
-    // Find all matches for this club
-    const matches = await Match.find({
-      [`clubs.${clubId}`]: { $exists: true }
-    });
-    
-    if (matches.length === 0) {
+    try {
+      await connectToDatabase();
+      
+      const stats = await Match.aggregate([
+        { $match: { [`clubs.${clubId}`]: { $exists: true } } },
+        {
+          $project: {
+            clubData: { $getField: { field: clubId, input: "$clubs" } }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalMatches: { $sum: 1 },
+            wins: {
+              $sum: {
+                $cond: [{ $in: [{ $toInt: "$clubData.result" }, [1, 16385]] }, 1, 0]
+              }
+            },
+            losses: {
+              $sum: {
+                $cond: [{ $in: [{ $toInt: "$clubData.result" }, [2, 10]] }, 1, 0]
+              }
+            },
+            goalsFor: { $sum: { $toInt: { $ifNull: ["$clubData.goals", "0"] } } },
+            goalsAgainst: { $sum: { $toInt: { $ifNull: ["$clubData.goalsAgainst", "0"] } } }
+          }
+        }
+      ]);
+      
+      if (!stats.length) {
+        return { totalMatches: 0, wins: 0, losses: 0, ties: 0, goalsFor: 0, goalsAgainst: 0 };
+      }
+      
+      const { totalMatches, wins, losses, goalsFor, goalsAgainst } = stats[0];
+      return {
+        totalMatches,
+        wins,
+        losses,
+        ties: totalMatches - wins - losses,
+        goalsFor,
+        goalsAgainst
+      };
+    } catch (error) {
+      console.error('Error fetching club match stats:', error);
       return {
         totalMatches: 0,
         wins: 0,
@@ -277,75 +313,5 @@ export async function getClubMatchStats(clubId: string) {
         goalsAgainst: 0
       };
     }
-    
-    let wins = 0;
-    let losses = 0;
-    let ties = 0;
-    let goalsFor = 0;
-    let goalsAgainst = 0;
-    
-    matches.forEach(match => {
-      const clubData = match.clubs[clubId];
-      if (clubData) {
-        // Check result (1 = win, 2 = loss, 16385 = win by DNF, 10 = loss by DNF)
-        const result = parseInt(clubData.result);
-        if (result === 1 || result === 16385) {
-          wins++;
-        } else if (result === 2 || result === 10) {
-          losses++;
-        } else {
-          ties++;
-        }
-        
-        goalsFor += parseInt(clubData.goals || '0');
-        goalsAgainst += parseInt(clubData.goalsAgainst || '0');
-      }
-    });
-    
-    return {
-      totalMatches: matches.length,
-      wins,
-      losses,
-      ties,
-      goalsFor,
-      goalsAgainst
-    };
-  } catch (error) {
-    console.error('Error fetching club match stats:', error);
-    return {
-      totalMatches: 0,
-      wins: 0,
-      losses: 0,
-      ties: 0,
-      goalsFor: 0,
-      goalsAgainst: 0
-    };
   }
-}
 
-/**
- * Deletes old matches (older than specified days)
- * @param daysOld - Number of days to keep matches (default: 30)
- * @returns Number of deleted matches
- */
-export async function deleteOldMatches(daysOld = 30) {
-  try {
-    await connectToDatabase();
-    
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - daysOld);
-    const cutoffTimestamp = cutoffDate.getTime() / 1000;
-    
-    const result = await Match.deleteMany({
-      timestamp: { $lt: cutoffTimestamp }
-    });
-    
-    // Revalidate paths
-    revalidatePath('/admin/matches');
-    
-    return result.deletedCount;
-  } catch (error) {
-    console.error('Error deleting old matches:', error);
-    return 0;
-  }
-}
