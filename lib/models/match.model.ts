@@ -225,7 +225,7 @@ MatchSchema.index({ matchId: 1 }, { unique: true });
 // Create index for timestamp to support time-based queries
 MatchSchema.index({ timestamp: -1 });
 
-// Create compound index for club IDs to support finding matches by club
-MatchSchema.index({ "clubs.8501.clubId": 1 });
+// Create a text index on matchId for faster searches
+MatchSchema.index({ matchId: "text" });
 
 export default mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema);

@@ -162,39 +162,45 @@ export async function deleteClub(clubId: string) {
  * Imports club data from EA API
  * @param clubName - The name of the club to import
  * @param platform - The platform (default: "common-gen5")
- * @returns The imported club or null if error
+ * @returns Array of imported clubs or null if error
  */
 export async function importClubFromEA(clubName: string, platform = "common-gen5") {
-  try {
-    // Fetch club data from EA API
-    const clubData = await getClubId(clubName, platform);
-    
-    if (!clubData || !Object.keys(clubData).length) {
+    try {
+      // Fetch club data from EA API
+      const clubData = await getClubId(clubName, platform);
+      
+      if (!clubData || !Object.keys(clubData).length) {
+        return null;
+      }
+      
+      const importedClubs = [];
+      
+      // Process all clubs returned by the API (not just the first one)
+      for (const clubId of Object.keys(clubData)) {
+        // Reconstruct clubInfo to include clubId as a field
+        const clubInfo = { clubId, ...clubData[clubId] };
+        
+        // Check if club already exists
+        await connectToDatabase();
+        const existingClub = await Club.findOne({ clubId });
+        
+        if (existingClub) {
+          // Update existing club
+          const updatedClub = await updateClub(clubId, clubInfo);
+          if (updatedClub) importedClubs.push(updatedClub);
+        } else {
+          // Create new club
+          const newClub = await createClub(clubInfo);
+          if (newClub) importedClubs.push(newClub);
+        }
+      }
+      
+      return importedClubs;
+    } catch (error) {
+      console.error('Error importing club from EA:', error);
       return null;
     }
-    
-    // Extract the first (and only) club from the response
-    const clubId = Object.keys(clubData)[0];
-    const clubInfo = clubData[clubId];
-    
-    // Check if club already exists
-    await connectToDatabase();
-    const existingClub = await Club.findOne({ clubId });
-    
-    if (existingClub) {
-      // Update existing club
-      const updatedClub = await updateClub(clubId, clubInfo);
-      return updatedClub;
-    } else {
-      // Create new club
-      const newClub = await createClub(clubInfo);
-      return newClub;
-    }
-  } catch (error) {
-    console.error('Error importing club from EA:', error);
-    return null;
   }
-}
 
 /**
  * Searches for clubs by name in EA API
