@@ -174,6 +174,7 @@ export async function importClubFromEA(clubName: string, platform = "common-gen5
       }
       
       const importedClubs = [];
+      await connectToDatabase();
       
       // Process all clubs returned by the API (not just the first one)
       for (const clubId of Object.keys(clubData)) {
@@ -181,7 +182,7 @@ export async function importClubFromEA(clubName: string, platform = "common-gen5
         const clubInfo = { clubId, ...clubData[clubId] };
         
         // Check if club already exists
-        await connectToDatabase();
+      
         const existingClub = await Club.findOne({ clubId });
         
         if (existingClub) {
