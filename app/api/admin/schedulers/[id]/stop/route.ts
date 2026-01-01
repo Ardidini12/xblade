@@ -7,10 +7,11 @@ import { stopScheduler } from '@/lib/actions/scheduler.actions';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const scheduler = await stopScheduler(params.id);
+    const { id } = await params;
+    const scheduler = await stopScheduler(id);
     
     if (!scheduler) {
       return NextResponse.json(

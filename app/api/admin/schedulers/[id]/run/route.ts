@@ -7,10 +7,11 @@ import { runSchedulerManually } from '@/lib/actions/scheduler.actions';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const result = await runSchedulerManually(params.id);
+    const { id } = await params;
+    const result = await runSchedulerManually(id);
     
     if (!result) {
       return NextResponse.json(

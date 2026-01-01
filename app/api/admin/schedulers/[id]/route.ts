@@ -11,10 +11,11 @@ import { startScheduler, stopScheduler, runSchedulerManually } from '@/lib/actio
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const scheduler = await getSchedulerById(params.id);
+    const { id } = await params;
+    const scheduler = await getSchedulerById(id);
     
     if (!scheduler) {
       return NextResponse.json(
@@ -35,12 +36,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     
-    const scheduler = await updateScheduler(params.id, body);
+    const scheduler = await updateScheduler(id, body);
     
     if (!scheduler) {
       return NextResponse.json(
@@ -61,10 +63,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const success = await deleteScheduler(params.id);
+    const { id } = await params;
+    const success = await deleteScheduler(id);
     
     if (!success) {
       return NextResponse.json(

@@ -284,7 +284,7 @@ export async function removeSeasonFromLeague(leagueId: string, seasonId: string)
     // Remove the season from the league
     const updatedLeague = await League.findByIdAndUpdate(
       leagueId,
-      { $pull: { seasons: seasonId } },
+      { $pull: { seasons: { _id: seasonId } } },
       { new: true }
     );
     
