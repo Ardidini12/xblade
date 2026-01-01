@@ -10,11 +10,12 @@ import { getSeasonById } from '@/lib/actions/league.actions';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; seasonId: string } }
+  { params }: { params: Promise<{ id: string; seasonId: string }> }
 ) {
   try {
+    const { id, seasonId } = await params;
     // Verify the season belongs to the league
-    const season = await getSeasonById(params.seasonId);
+    const season = await getSeasonById(seasonId);
     
     if (!season) {
       return NextResponse.json(
@@ -23,14 +24,14 @@ export async function GET(
       );
     }
 
-    if (season.leagueId !== params.id) {
+    if (season.leagueId !== id) {
       return NextResponse.json(
         { error: 'Season does not belong to this league' },
         { status: 400 }
       );
     }
 
-    const clubs = await getClubsForSeason(params.seasonId);
+    const clubs = await getClubsForSeason(seasonId);
     
     return NextResponse.json(clubs);
   } catch (error) {
@@ -44,9 +45,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; seasonId: string } }
+  { params }: { params: Promise<{ id: string; seasonId: string }> }
 ) {
   try {
+    const { id, seasonId } = await params;
     const body = await request.json();
     
     // Validate required fields
@@ -58,7 +60,7 @@ export async function POST(
     }
 
     // Verify the season belongs to the league
-    const season = await getSeasonById(params.seasonId);
+    const season = await getSeasonById(seasonId);
     
     if (!season) {
       return NextResponse.json(
@@ -67,14 +69,14 @@ export async function POST(
       );
     }
 
-    if (season.leagueId !== params.id) {
+    if (season.leagueId !== id) {
       return NextResponse.json(
         { error: 'Season does not belong to this league' },
         { status: 400 }
       );
     }
     
-    const updatedSeason = await addClubToSeason(params.id, params.seasonId, body.clubId);
+    const updatedSeason = await addClubToSeason(id, seasonId, body.clubId);
     
     if (!updatedSeason) {
       return NextResponse.json(

@@ -10,10 +10,11 @@ import { getLeagueById, updateLeague, deleteLeague } from '@/lib/actions/league.
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const league = await getLeagueById(params.id);
+    const { id } = await params;
+    const league = await getLeagueById(id);
     
     if (!league) {
       return NextResponse.json(
@@ -34,9 +35,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     
     // Validate type if provided
@@ -47,7 +49,7 @@ export async function PUT(
       );
     }
     
-    const league = await updateLeague(params.id, body);
+    const league = await updateLeague(id, body);
     
     if (!league) {
       return NextResponse.json(
@@ -68,10 +70,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const success = await deleteLeague(params.id);
+    const { id } = await params;
+    const success = await deleteLeague(id);
     
     if (!success) {
       return NextResponse.json(

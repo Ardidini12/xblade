@@ -9,11 +9,12 @@ import { removeClubFromSeason, getSeasonById } from '@/lib/actions/league.action
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; seasonId: string; clubId: string } }
+  { params }: { params: Promise<{ id: string; seasonId: string; clubId: string }> }
 ) {
   try {
+    const { id, seasonId, clubId } = await params;
     // Verify the season belongs to the league
-    const season = await getSeasonById(params.seasonId);
+    const season = await getSeasonById(seasonId);
     
     if (!season) {
       return NextResponse.json(
@@ -22,7 +23,7 @@ export async function DELETE(
       );
     }
 
-    if (season.leagueId !== params.id) {
+    if (season.leagueId !== id) {
       return NextResponse.json(
         { error: 'Season does not belong to this league' },
         { status: 400 }
@@ -30,14 +31,14 @@ export async function DELETE(
     }
 
     // Verify the club is in the season
-    if (!season.clubs || !season.clubs.includes(params.clubId)) {
+    if (!season.clubs || !season.clubs.includes(clubId)) {
       return NextResponse.json(
         { error: 'Club is not in this season' },
         { status: 404 }
       );
     }
     
-    const updatedSeason = await removeClubFromSeason(params.id, params.seasonId, params.clubId);
+    const updatedSeason = await removeClubFromSeason(id, seasonId, clubId);
     
     if (!updatedSeason) {
       return NextResponse.json(
