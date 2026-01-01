@@ -219,9 +219,6 @@ const ClubSchema: Schema = new Schema({
   timestamps: true
 });
 
-// Create index for clubId to ensure fast lookups
-ClubSchema.index({ clubId: 1 });
-
 // Create compound index for name and platform to support searching
 ClubSchema.index({ name: 1, platform: 1 });
 

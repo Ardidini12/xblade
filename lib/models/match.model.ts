@@ -219,9 +219,6 @@ const MatchSchema: Schema = new Schema({
   timestamps: true
 });
 
-// Create index for matchId to ensure fast lookups and prevent duplicates
-MatchSchema.index({ matchId: 1 }, { unique: true });
-
 // Create index for timestamp to support time-based queries
 MatchSchema.index({ timestamp: -1 });
 

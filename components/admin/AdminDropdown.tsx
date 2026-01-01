@@ -83,9 +83,16 @@ const AdminDropdown = ({ children }: AdminDropdownProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/admin/settings">
+          <Link href="/admin/schedulers">
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>Scheduler Management</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/admin/leagues">
+            <Shield className="mr-2 h-4 w-4" />
+            <span>League Management</span>
           </Link>
         </DropdownMenuItem>
         
